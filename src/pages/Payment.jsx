@@ -1,6 +1,7 @@
 import Header from "../components/Header";
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { useNavigate } from "react-router-dom";
+import InputMask from 'react-input-mask'
 
 //material ui
 import Box from '@mui/material/Box';
@@ -8,44 +9,61 @@ import TextField from "@mui/material/TextField";
 import Footer from "../components/Footer";
 
 const Payment = () => {
-    const { register, formState: { errors }} = useForm();
-    const onSubmit = data => console.log(data)
+    const { register, formState: { errors }, control, handleSubmit} = useForm();
     const navigate = useNavigate()
 
-    const handleSubmit = () => {
-        navigate(`/confirmPayment`)
+    const onSubmit = (data) => {
+
+        console.log('Dados validados:', data)
+        navigate(`/confirmPayment`, {state: data})
     } 
 
     return(
         <div className="bg-gray-100 w-full h-screen">
-            <header>
+            <header className="flex w-full md:w-2/4 justify-center items-center mx-auto">
                 <Header/>
             </header>
 
             <main className="bg-white border shadow-md rounded-lg mx-auto mt-8 p-6 max-w-md w-full">
-                <form onSubmit={handleSubmit(onSubmit   )}>
-                    <h1>Cartao de Credito</h1>
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <h1 className="font-bold ml-2 text-xl">Cartao de Credito</h1>
                     <Box
-                        sx={{ '& > :not(style)': { m: 1, width: '25ch' } }}
+                        sx={{ '& > :not(style)': { m: 1, width: '500', maxWidth: '100%' } }}
                         noValidate
                         autoComplete="off"
                     >
-                        <TextField 
-                        id="outlined-basic" 
-                        label="Numero" 
-                        variant="outlined" 
-                        placeholder="0000 0000 0000 0000"
-                        error={!!errors.cardNumber}
-                        helperText={errors.cardNumber ? errors.cardNumber.message : ''}
-                        {...register('cardNumber', {
-                            required: "Número do cartao é obrigatório",
-                            pattern: {
-                                value: /^[0-9]{16}$/,
-                                message: "Número de cartão inválido",
-                            }
-                        })}
+                        <Controller
+                            name="cardNumber"
+                            control={control}
+                            defaultValue=''
+                            rules={{
+                                required: "Número do cartão é obrigatório",
+                                pattern: {
+                                    value: /^[0-9\s]{19}$/,
+                                    message: "Número de cartão inválido",
+                                }
+                            }}
+                            render={({ field }) => (
+                               <InputMask
+                                mask="9999 9999 9999 9999"
+                                value={field.value}
+                                onChange={field.onChange}
+                                onBlur={field.onBlur}
+                                >
+                                    {() => (
+                                        <TextField 
+                                        {...field}
+                                        label="Número do cartão" 
+                                        variant="outlined" 
+                                        placeholder="0000 0000 0000 0000"
+                                        error={!!errors.cardNumber}
+                                        helperText={errors.cardNumber ? errors.cardNumber.message : ''}
+                                        fullWidth
+                                        />
+                                    )}
+                                </InputMask>
+                            )}
                         />
-
                         <TextField 
                         id="cardHolder" 
                         label="Nome do Titular" 
@@ -53,25 +71,43 @@ const Payment = () => {
                         placeholder="Nome impresso no cartão"
                         error={!!errors.cardHolder}
                         helperText={errors.cardHolder ? errors.cardHolder.message : ''}
+                        fullWidth
                         {...register('cardHolder', {
                             required: "Nome do titular é obrigatório",
                         })}
                         />
 
-                        <TextField 
-                        id="expiryDate" 
-                        label="Validade" 
-                        variant="outlined" 
-                        placeholder="MM/AA"
-                        error={!!errors.expiryDate}
-                        helperText={errors.expiryDate ? errors.expiryDate.message : ''}
-                        {...register('expiryDate', {
-                            required: "Data de validade é obrigatória",
-                            pattern: {
-                                value: /^(0[1-9]|1[0-2])\/d{2}$/,
-                                message: "Data de validade inválida",
-                            }
-                        })}
+                        <Controller
+                            name="expiryDate"
+                            control={control}
+                            defaultValue=''
+                            rules={{
+                                required: "Validade do Cartão é obrigatório",
+                                pattern: {
+                                    value: /^(0[1-9]|1[0-2])\/[0-9]{2}$/,
+                                    message: "Data de validade inválida",
+                                }
+                            }}
+                            render={({ field }) => (
+                               <InputMask
+                                mask="99/99"
+                                value={field.value}
+                                onChange={field.onChange}
+                                onBlur={field.onBlur}
+                                >
+                                    {() => (
+                                        <TextField 
+                                        {...field}
+                                        label="Validade" 
+                                        variant="outlined" 
+                                        placeholder="MM/AA"
+                                        error={!!errors.expiryDate}
+                                        helperText={errors.expiryDate ? errors.expiryDate.message : ''}
+                                        
+                                        />
+                                    )}
+                                </InputMask>
+                            )}
                         />
 
                         <TextField 
@@ -94,10 +130,11 @@ const Payment = () => {
                 </form>
             </main>
 
-            <footer>
-                <Footer/>
+            <footer className="flex flex-col justify-center items-center">
+                <Footer className=''/>
                 <button type="submit"
-                className="w-3/4 py-2 px-2 bg-purple-500 text-white font-bold rounded-md"
+                onClick={handleSubmit(onSubmit)}
+                className="w-full md:w-2/4 py-2 px-2 bg-purple-500 text-white font-bold rounded-md"
                 >Finalizar o pedido</button>
             </footer>
         </div>

@@ -13,8 +13,6 @@ const ProductsDetails = () => {
           try {
             const response = await axios.get('https://dummyjson.com/products')
             setProducts(response.data.products.slice(0, 3))
-            console.log(response.data)
-            console.log(products)
           } catch (error) {
             console.log(error)
           }
