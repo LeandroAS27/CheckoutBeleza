@@ -15,7 +15,7 @@ const Header = () => {
                 >Pagamento</li>
                 <li
                 className={`cursor-pointer ${location.pathname === "/confirmPayment" ? 'border-b-4 border-black' : ''}`}
-                >Confirmacao</li>
+                >Confirmação</li>
             </ul>
         </header>
     )

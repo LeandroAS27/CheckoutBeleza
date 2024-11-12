@@ -26,7 +26,7 @@ const ProductsDetails = () => {
             {products && Array.isArray(products) && (
                 <div>
                     {products.map((product) => (
-                        <div key={product.id} className="flex justify-start items-center mb-4">
+                        <div key={product.id} className="flex justify-start items-center mb-14">
                             <img 
                             src={product.thumbnail} 
                             alt={product.title}
@@ -35,7 +35,7 @@ const ProductsDetails = () => {
                             <div className="flex-1 px-4">
                                 <h2>{product.title}</h2>
                             </div>
-                            <p className="font-bold text-lg text-gray-800">R${product.price}</p> 
+                            <p className="font-bold text-lg text-gray-800">R${(product.price).toLocaleString('pt-BR', {minimunFractionDigits: 2, maximumFractionDigits: 2})}</p> 
                         </div>
                     ))}
                 </div>
